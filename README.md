@@ -119,23 +119,111 @@ Major limitation that doesn’t allow for more deep exploration and analysis is 
 The twitter data also doesn;t include other major languages and geo data which may have a significant impact on the results. 
 
 
+### 4. Data Overview and Statistics
+
+**Tweet data**
+
+
+![tweet_data](img/tweet_data.png)
+
+![tweet_data](img/author_data.png)
+
+![tweet_data](img/tweet_counts.png)
+
+
+
+
 <br />
 <br />
+
+
+## 5. Neural network Classification Model
+
+**Raw Data Labeling Process**
+
+For the best results twitter text content should be labeled manually, however in this case, due to time constraints, Twitter data was labeled using VADER (Valence Aware Dictionary and sEntiment Reasoner). 
+
+Vader is a lexicon and rule-based sentiment analysis tool that is specifically attuned to sentiments expressed in social media. VADER uses a combination of A sentiment lexicon is a list of lexical features (e.g., words) which are generally labeled according to their semantic orientation as either positive or negative. VADER not only tells about the Positivity and Negativity score but also tells us about how positive or negative a sentiment is.
+
+![tweet_data](img/tweet_vader.png)
+
+The Compound score is a metric that calculates the sum of all the lexicon ratings which have been normalized between -1(most extreme negative) and +1 (most extreme positive).
+- positive sentiment : (compound score >= 0.05) 
+- neutral sentiment : (compound score > -0.05) and (compound score < 0.05) 
+- negative sentiment : (compound score <= -0.05)
+
+![tweet_data](img/tweet_labels.png)
+
+**Cleaning and Preprocessing Data**
+
+Keras provides a Tokenizer class that can be fit on the training data, can convert text to sequences consistently by calling the texts_to_sequences() method on the Tokenizer class, and provides access to the dictionary mapping of words to integers in a word_index attribute.
+
+1. Address class weight imbalance by providing class weights with sklearn compute_class_weight function
+2. Create and remove typical stopwords and punctuation that occur in English language with nltk.word_tokenize
+3. Check tweet length distribution and max value (including stopwords)
+4. Vectorize tweets using Tokenizer class from keras.preprocessing.text library by vectorizing a tweets’ text corpus by turning each text into either a sequence of integers
+5. Truncate and pad input sequences to be all the same length vectors with keras.preprocessing.sequence.pad_sequences. This function transforms a list of sequences (lists of integers) into a 2D Numpy array of shape (num_samples, num_timesteps). num_timesteps is either the maxlen argument if provided, or the length of the longest sequence in the list.
+    - Sequences that are shorter than num_timesteps are padded with value until they are num_timesteps long.
+    - Sequences longer than num_timesteps are truncated so that they fit the desired length.
+
+```python
+# This class allows to vectorize a text corpus, by turning each text into either a sequence of integers
+sequences = t.texts_to_sequences(data['text'])
+
+# Find longest tweet in sequences
+def max_tweet():
+    for i in range(1, len(sequences)):
+        max_length = len(sequences[0])
+        if len(sequences[i]) > max_length:
+            max_length = len(sequences[i])
+    return max_length
+
+max_tweet_len = max_tweet()
+
+#Truncate and pad input sequences to be all the same lenght vectors
+padded_data = pad_sequences(sequences, maxlen=max_tweet_len)
+padded_data
+```
+
+
+``` 
+array([[ 6023,  3194,  6024, ...,     3,     4,  6028],
+       [    0,     0,     0, ...,     3,     4,  6029],
+       [    0,     0,     0, ...,     3,     4,  6030],
+       ...,
+       [    0,     0,     0, ...,     3,     4, 15043],
+       [    0,     0,     0, ...,     3,     4, 15046],
+       [    0,     0,     0, ...,     2,     1, 15049]], dtype=int32)
+```
+
+<br />
+6. Split data into training and test sets using train_test_split function. Check the shape of data after splitting
+
+```python
+# Split data into training and test sets
+X_train, X_test, y_train, y_test = train_test_split(padded_data, target, test_size = 0.2, random_state = 0)
+
+y_train = to_categorical(y_train)
+y_test = to_categorical(y_test)
+
+# Size of train and test datasets
+print('X_train size:', X_train.shape)
+print('y_train size:', y_train.shape)
+print('X_test size:', X_test.shape)
+print('y_test size:', y_test.shape)
+```
+
+```
+X_train size: (3812, 45)
+y_train size: (3812, 3)
+X_test size: (954, 45)
+y_test size: (954, 3)
+```
+
+<br />
+
 
 
 ---
 
 
-```python
-from nltk.corpus import stopwords
-import string
-
-# Get all the stop words in the English language
-stopwords_list = stopwords.words('english')
-
-# It is generally a good idea to also remove punctuation
-
-# Now we have a list that includes all english stopwords, as well as all punctuation
-stopwords_list += list(string.punctuation)
-stopwords_list += ['“','”','‘','’', "'"]
-```
