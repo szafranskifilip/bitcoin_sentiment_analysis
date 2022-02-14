@@ -1,3 +1,5 @@
+![tweet_data](img/cover.jpg)
+
 # Bitcoin sentiment and price analysis. Search for patterns affecting price changes. 
 
 ---
@@ -61,6 +63,7 @@ public_metrics["like_count"]
 public_metrics["like_count"]
 text
 ```
+
 
 - author data
 
@@ -126,12 +129,30 @@ The twitter data also doesn;t include other major languages and geo data which m
 
 ![tweet_data](img/tweet_data.png)
 
+![tweet_data](img/tweet_public_metrics.png)
+
+![tweet_data](img/tweet_source.png)
+
+
+**Author data**
+
 ![tweet_data](img/author_data.png)
+
+![tweet_data](img/author_most_pop.png)
+
+
+**Tweet Counts**
 
 ![tweet_data](img/tweet_counts.png)
 
+![tweet_data](img/plot_tweet_counts.png)
 
 
+**Bitcoin Price**
+
+![tweet_data](img/btc_price_df.png)
+
+![tweet_data](img/plot_btc_price.png)
 
 <br />
 <br />
@@ -197,7 +218,9 @@ array([[ 6023,  3194,  6024, ...,     3,     4,  6028],
 ```
 
 <br />
+
 6. Split data into training and test sets using train_test_split function. Check the shape of data after splitting
+
 
 ```python
 # Split data into training and test sets
@@ -222,8 +245,224 @@ y_test size: (954, 3)
 
 <br />
 
+**Pre-trained word embedding with Glove**
+
+Word embedding provides a dense representation of words and their relative meanings. They are an improvement over sparse representations used in simpler bag of word model representations. The position of a word within the vector space is learned from text and is based on the words that surround the word when it is used.
+
+The position of a word in the learned vector space is referred to as its embedding.
+
+Two popular examples of methods of learning word embeddings from text include:
+
+- Word2Vec
+- GloVe
+
+GloVe stands for global vectors for word representation. It is an unsupervised learning algorithm 
+developed by Stanford for generating word embeddings by aggregating global word-word co-occurrence matrix from a corpus.
+
+The GloVe model is trained on the non-zero entries of a global word-word co-occurrence matrix, which tabulates how frequently words co-occur with one another in a given corpus. Populating this matrix requires a single pass through the entire corpus to collect the statistics. For large corpora, this pass can be computationally expensive, but it is a one-time up-front cost.
+
+In addition to these carefully designed methods, a word embedding can be learned as part of a deep learning model. This can be a slower approach, but tailors the model to a specific training dataset.
+
+**Create embedding matrix and Keras embedding layer**
+
+The Keras Embedding layer can also use a word embedding learned elsewhere. It is common in the field of Natural Language Processing to learn, save, and make freely available word embeddings.
 
 
----
+
+1. Load the whole Glove embedding file into memory as a dictionary of words to an embedding array. A 50 dimensional version (embedding dimension) will be used.
+2. Populate the matrix by iterating over the corpus content
+3. Create an embedding layer to be used in the training model using the Embedding function from Keras. 
+4. The embedding layer can be seeded with the GloVe word embedding weights.
+5. We chose the 50-dimensional version, therefore the Embedding layer must be defined with output_dim set to 50.
+6. We do not want to update the learned word weights in this model, therefore we will set the trainable attribute for the model to be False
 
 
+```python
+# Input is vocab_size, output is 50
+# Weights from embedding matrix, set trainable = False
+tweet_num = max_tweet_len
+
+#Create the embdedding layer
+embedding_layer = Embedding(input_dim=vocab_size, output_dim=50, weights=[embedding_matrix],
+                           input_length = tweet_num, trainable=False)
+```
+
+
+**Build and test different neural network models**
+
+- Model 1: Simple LSTM Model with regularization, increase dimensionality
+
+```
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+embedding_1 (Embedding)      (None, 45, 50)            752500    
+_________________________________________________________________
+lstm_2 (LSTM)                (None, 256)               314368    
+_________________________________________________________________
+dense_2 (Dense)              (None, 3)                 771       
+=================================================================
+Total params: 1,067,639
+Trainable params: 315,139
+Non-trainable params: 752,500
+_________________________________________________________________
+```
+
+```
+Training Accuracy: 0.9200
+Testing Accuracy:  0.7138
+```
+
+- Model 2: LSTM with regularization, reduce dimensionality
+
+```
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+embedding_1 (Embedding)      (None, 45, 50)            752500    
+_________________________________________________________________
+lstm_5 (LSTM)                (None, 100)               60400     
+_________________________________________________________________
+dense_5 (Dense)              (None, 3)                 303       
+=================================================================
+Total params: 813,203
+Trainable params: 60,703
+Non-trainable params: 752,500
+_________________________________________________________________
+```
+
+```
+Training Accuracy: 0.7977
+Testing Accuracy:  0.7055
+```
+
+- Model 3: LSTM Layer Stacking
+
+```
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+embedding_1 (Embedding)      (None, 45, 50)            752500    
+_________________________________________________________________
+lstm_6 (LSTM)                (None, 45, 80)            41920     
+_________________________________________________________________
+lstm_7 (LSTM)                (None, 20)                8080      
+_________________________________________________________________
+dense_6 (Dense)              (None, 3)                 63        
+=================================================================
+Total params: 802,563
+Trainable params: 50,063
+Non-trainable params: 752,500
+_________________________________________________________________
+```
+
+```
+Training Accuracy: 0.7875
+Testing Accuracy:  0.7065
+```
+
+
+- Model 4: GRU Layer Stacking
+
+```
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+embedding_1 (Embedding)      (None, 45, 50)            752500    
+_________________________________________________________________
+gru_3 (GRU)                  (None, 45, 64)            22080     
+_________________________________________________________________
+gru_4 (GRU)                  (None, 32)                9312      
+_________________________________________________________________
+dense_8 (Dense)              (None, 3)                 99        
+=================================================================
+Total params: 783,991
+Trainable params: 31,491
+Non-trainable params: 752,500
+_________________________________________________________________
+```
+
+```
+Training Accuracy: 0.7891
+Testing Accuracy:  0.7096
+```
+
+**General Architecture**
+The inputs for each of the following models are our training data which consists of 7,273 with 20% withheld for validation. Each one of these observations contains 50 “features” which correspond to each word in the tweet. Any 0’s indicate the absence of a word.
+Each model ends with a dense layer with 3 nodes, because we have 3 possible labels: positive, neutral, or negative. Because we one-hot encoded our labels, we use softmax for this multiclass classification problem to get a probability for each class. Additionally, we use accuracy as our metric, because this is a classification problem. When we use the predict method from Keras, we get a 3 element row vector for each input. Each element corresponds to a probability of one of the 3 labels. Therefore, the label with the highest probability is the predicted outcome. We compile each model with adam and categorical cross entropy.
+
+**Incorporating the GloVe**
+GloVe is defined to be an “unsupervised learning algorithm for obtaining vector representations for words”. Pre-trained word vectors data was downloaded from the Stanford University website. The models specifically use the 50 -dimensional embeddings of 1.2M words from 2B tweets. This is represented in a txt file that was parsed to create an index that maps words to their vector representation. Using GloVe data improved the accuracy of the model by about 3-4%.
+
+**Best model**
+All models perform quite well, however, Model 4 with two stacked GRU layers, seems to have the best train/validation accuracy based on the training/validation results plot (history_4). 
+All models have some difficulties with predicting negative emotions due to the class imbalance - small amount of negative labels in the original dataset. In order to mitigate the class imbalance, we passed the pass the class_wieght argument to the fit() functions. This improved the results and reduced overfitting.
+
+<br />
+
+## 6. Exploratory Data Analysis and Results
+
+Correlations with Price
+NLP Process Overview
+Time Series and Price Analysis
+Sentiment and Text Content Analysis 
+
+
+**Concatenate all dataframes into one master dataframe**
+
+![tweet_data](img/df_final.png)
+
+**Let’s explore how the positive and negative tweets affect the price changes**
+
+![tweet_data](img/scatter_plot_final_df_selected.png)
+
+
+**Correlations**
+
+![tweet_data](img/df_final_corr.png)
+
+![tweet_data](img/heatmap_corr.png)
+
+
+This measures the strength and direction of the linear relationship between two variables. It cannot capture nonlinear relationships between two variables and cannot differentiate between dependent and independent variables.1
+
+A value of exactly 1.0 means there is a perfect positive relationship between the two variables. For a positive increase in one variable, there is also a positive increase in the second variable. A value of -1.0 means there is a perfect negative relationship between the two variables. This shows that the variables move in opposite directions—for a positive increase in one variable, there is a decrease in the second variable. If the correlation between two variables is 0, there is no linear relationship between them.
+
+The strength of the relationship varies in degree based on the value of the correlation coefficient. For example, a value of 0.2 shows there is a positive correlation between two variables, but it is weak and likely unimportant. Analysts in some fields of study do not consider correlations important until the value surpasses at least 0.8. However, a correlation coefficient with an absolute value of 0.9 or greater would represent a very strong relationship.
+
+<br />
+
+**Correlation of frequently occurred words and bigrams with btc price different by hour**
+
+
+![tweet_data](img/tweet_words_bigrams.png)
+
+**Frequency of single words by hour**
+
+![tweet_data](img/word_freq.png)
+
+**Frequency of bigrams by hour**
+
+![tweet_data](img/bigram_freq.png)
+
+**Highest Correlations single words**
+
+![tweet_data](img/word_corr.png)
+
+**Highest Correlations for bigrams**
+
+![tweet_data](img/bigram_corr.png)
+
+
+
+
+
+https://www.linkedin.com/pulse/how-much-can-you-make-trading-bot-my-experience-month-gothireddy
+
+https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing
+
+https://www.geeksforgeeks.org/python-sentiment-analysis-using-vader/
+
+https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
+
+https://www.investopedia.com/terms/c/correlationcoefficient.asp
