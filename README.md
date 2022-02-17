@@ -158,7 +158,11 @@ The twitter data also doesn;t include other major languages and geo data which m
 <br />
 
 
-## 5. Neural network Classification Model
+## 5. Neural network Classification Model and NLP
+
+**Process Steps Diagram**
+
+![tweet_data](img/process_diagram.jpg)
 
 **Raw Data Labeling Process**
 
@@ -175,7 +179,9 @@ The Compound score is a metric that calculates the sum of all the lexicon rating
 
 ![tweet_data](img/tweet_labels.png)
 
-**Cleaning and Preprocessing Data**
+![tweet_data](img/labels_count.png)
+
+**Cleaning and Preprocessing Data with Natural Language Toolkit (NLTK)**
 
 Keras provides a Tokenizer class that can be fit on the training data, can convert text to sequences consistently by calling the texts_to_sequences() method on the Tokenizer class, and provides access to the dictionary mapping of words to integers in a word_index attribute.
 
@@ -263,7 +269,7 @@ The GloVe model is trained on the non-zero entries of a global word-word co-occu
 
 In addition to these carefully designed methods, a word embedding can be learned as part of a deep learning model. This can be a slower approach, but tailors the model to a specific training dataset.
 
-**Create embedding matrix and Keras embedding layer**
+**Create embedding matrix and KERAS embedding layer**
 
 The Keras Embedding layer can also use a word embedding learned elsewhere. It is common in the field of Natural Language Processing to learn, save, and make freely available word embeddings.
 
@@ -276,6 +282,25 @@ The Keras Embedding layer can also use a word embedding learned elsewhere. It is
 5. We chose the 50-dimensional version, therefore the Embedding layer must be defined with output_dim set to 50.
 6. We do not want to update the learned word weights in this model, therefore we will set the trainable attribute for the model to be False
 
+<br />
+
+**Embdedding layer**
+
+The Embedding layer is initialized with random weights and will learn an embedding for all of the words in the training dataset.
+
+It is a flexible layer that can be used in a variety of ways, such as:
+
+- It can be used alone to learn a word embedding that can be saved and used in another model later.
+- It can be used as part of a deep learning model where the embedding is learned along with the model itself.
+- It can be used to load a pre-trained word embedding model, a type of transfer learning which is the case here.
+
+The Embedding layer is defined as the first hidden layer of a network. It must specify 3 arguments:
+
+- input_dim: This is the size of the vocabulary in the text data. For example, if your data is integer encoded to values between 0-10, then the size of the vocabulary would be 11 words.
+- output_dim: This is the size of the vector space in which words will be embedded. It defines the size of the output vectors from this layer for each word. For example, it could be 32 or 100 or even larger. Test different values for your problem.
+- input_length: This is the length of input sequences, as you would define for any input layer of a Keras model. For example, if all of your input documents are comprised of 1000 words, this would be 1000.
+
+<br />
 
 ```python
 # Input is vocab_size, output is 50
@@ -286,6 +311,8 @@ tweet_num = max_tweet_len
 embedding_layer = Embedding(input_dim=vocab_size, output_dim=50, weights=[embedding_matrix],
                            input_length = tweet_num, trainable=False)
 ```
+
+![tweet_data](img/nn.jpg)
 
 
 **Build and test different neural network models**
@@ -387,6 +414,8 @@ Training Accuracy: 0.7891
 Testing Accuracy:  0.7096
 ```
 
+
+
 **General Architecture**
 The inputs for each of the following models are our training data which consists of 7,273 with 20% withheld for validation. Each one of these observations contains 50 “features” which correspond to each word in the tweet. Any 0’s indicate the absence of a word.
 Each model ends with a dense layer with 3 nodes, because we have 3 possible labels: positive, neutral, or negative. Because we one-hot encoded our labels, we use softmax for this multiclass classification problem to get a probability for each class. Additionally, we use accuracy as our metric, because this is a classification problem. When we use the predict method from Keras, we get a 3 element row vector for each input. Each element corresponds to a probability of one of the 3 labels. Therefore, the label with the highest probability is the predicted outcome. We compile each model with adam and categorical cross entropy.
@@ -445,17 +474,55 @@ The strength of the relationship varies in degree based on the value of the corr
 
 ![tweet_data](img/bigram_freq.png)
 
-**Highest Correlations single words**
+**Highest correlations single words**
+
+The single words with the highest correlation coefficients are included in the dataframe below. We can see that is word 'trying' with correlation of  0.32. This is not a high value for correlation so we can't say that any of those words is highly coorelated with the price change. That being said, if more data is provided, the correlation might change. 
 
 ![tweet_data](img/word_corr.png)
 
-**Highest Correlations for bigrams**
+**Highest correlations for bigrams**
 
 ![tweet_data](img/bigram_corr.png)
 
+<br />
+
+**Bitcoin price vs Twitter sentiment - plots comparison**
+
+![tweet_data](img/sentiment_price_corr.png)
+
+<br />
+
+- Best neural newtwork model is GRU with 71% accuracy
+
+- The hightest correlation for price difference vs. single wrods has 'trying' with 0.32 correlation coefficient
+
+- The hightest correlation for price difference vs. bigrams has 'are, getting' with 0.27 correlation coefficient
+
+- Negative sentiment has impact on the trading volume and price volatility
+
+- Negative sentiment has has bigger impact on the price change then positive and neutral 
+
+- Tweets' volums does not show any significat impact on the price change (correlation = 0.2)
+
+- Main tools used for posting tweets are Twitter Web App and Twitter for iPhone
+
+
+Next Steps
+
+- Gather more data
+
+- Perform analysis of the sentiment and see how it affetcs the price after certain time period. i.e 1 sec, 30 sec, 1min, etc. Analize the correlation coefficients for each period.
+
+- Check more languages for tweets. Certain languages like time zones might be corrleated with certain languages with might have an impact of price fluctuations. 
+
+- Try to predict the price move (increase or decrease) based on certain features like sentiment, author, time using NN or XGBoost
+
+- Visualize price difference vs. sentiment by minute
 
 
 
+
+<br />
 
 https://www.linkedin.com/pulse/how-much-can-you-make-trading-bot-my-experience-month-gothireddy
 
