@@ -41,7 +41,7 @@ Of course there are many more cases where sentiment analysis can be used to prov
 
 
 Trading bots mostly depend on the technical analysis and typical trading indicators and patterns. While this can be good for the stock market, it might fail with the cryptocurrencies due to the high volatility.
-To improve the accuracy and returns of the cryptocurrency trading algorithms, we could add a sentiment analysis component to track investors’ emotions towards cryptocurrencies. This feature could be another indicator to improve crypto trading [^1]. 
+To improve the accuracy and returns of the cryptocurrency trading algorithms, we could add a sentiment analysis component to track investors’ emotions towards cryptocurrencies. This feature could be another indicator to improve crypto trading[^1]. 
 
 <br />
 
@@ -168,7 +168,7 @@ The twitter data also doesn;t include other major languages and geo data which m
 
 For the best results twitter text content should be labeled manually, however in this case, due to time constraints, Twitter data was labeled using VADER (Valence Aware Dictionary and sEntiment Reasoner). 
 
-Vader is a lexicon and rule-based sentiment analysis tool that is specifically attuned to sentiments expressed in social media. VADER uses a combination of A sentiment lexicon is a list of lexical features (e.g., words) which are generally labeled according to their semantic orientation as either positive or negative. VADER not only tells about the Positivity and Negativity score but also tells us about how positive or negative a sentiment is [^2].
+Vader is a lexicon and rule-based sentiment analysis tool that is specifically attuned to sentiments expressed in social media. VADER uses a combination of A sentiment lexicon is a list of lexical features (e.g., words) which are generally labeled according to their semantic orientation as either positive or negative. VADER not only tells about the Positivity and Negativity score but also tells us about how positive or negative a sentiment is[^2].
 
 ![tweet_data](img/tweet_vader.png)
 
@@ -267,7 +267,7 @@ developed by Stanford for generating word embeddings by aggregating global word-
 
 The GloVe model is trained on the non-zero entries of a global word-word co-occurrence matrix, which tabulates how frequently words co-occur with one another in a given corpus. Populating this matrix requires a single pass through the entire corpus to collect the statistics. For large corpora, this pass can be computationally expensive, but it is a one-time up-front cost.
 
-In addition to these carefully designed methods, a word embedding can be learned as part of a deep learning model. This can be a slower approach, but tailors the model to a specific training dataset [^3].
+In addition to these carefully designed methods, a word embedding can be learned as part of a deep learning model. This can be a slower approach, but tailors the model to a specific training dataset[^3].
 
 <br />
 
@@ -301,7 +301,7 @@ The Embedding layer is defined as the first hidden layer of a network. It must s
 
 - input_dim: This is the size of the vocabulary in the text data. For example, if your data is integer encoded to values between 0-10, then the size of the vocabulary would be 11 words.
 - output_dim: This is the size of the vector space in which words will be embedded. It defines the size of the output vectors from this layer for each word. For example, it could be 32 or 100 or even larger. Test different values for your problem.
-- input_length: This is the length of input sequences, as you would define for any input layer of a Keras model. For example, if all of your input documents are comprised of 1000 words, this would be 1000 [^3].
+- input_length: This is the length of input sequences, as you would define for any input layer of a Keras model. For example, if all of your input documents are comprised of 1000 words, this would be 1000[^3].
 
 <br />
 
@@ -315,10 +315,21 @@ embedding_layer = Embedding(input_dim=vocab_size, output_dim=50, weights=[embedd
                            input_length = tweet_num, trainable=False)
 ```
 
+<br />
+
+
+
+**Visual representation of Model 4**
+
+
 ![tweet_data](img/nn.jpg)
 
 
-**Build and test different neural network models**
+**Build and test different recurrent neural network models**
+
+**A recurrent neural network (RNN**) is a type of artificial neural network which uses sequential data or time series data. These deep learning algorithms are commonly used for ordinal or temporal problems, such as language translation, natural language processing (nlp), speech recognition, and image captioning; they are incorporated into popular applications such as Siri, voice search, and Google Translate. Like feedforward and convolutional neural networks (CNNs), recurrent neural networks utilize training data to learn. They are distinguished by their “memory” as they take information from prior inputs to influence the current input and output. While traditional deep neural networks assume that inputs and outputs are independent of each other, the output of recurrent neural networks depend on the prior elements within the sequence. While future events would also be helpful in determining the output of a given sequence, unidirectional recurrent neural networks cannot account for these events in their predictions[^4].
+
+<br />
 
 - Model 1: Simple LSTM Model with regularization, increase dimensionality
 
@@ -326,7 +337,7 @@ embedding_layer = Embedding(input_dim=vocab_size, output_dim=50, weights=[embedd
 
     As an example, let’s say we wanted to predict the italicized words in following, “Alice is allergic to nuts. She *can’t eat peanut butter*.” The context of a nut allergy can help us anticipate that the food that cannot be eaten contains nuts. However, if that context was a few sentences prior, then it would make it difficult, or even impossible, for the RNN to connect the information. 
 
-    To remedy this, LSTMs have “cells” in the hidden layers of the neural network, which have three gates–an input gate, an output gate, and a forget gate. These gates control the flow of information which is needed to predict the output in the network.  For example, if gender pronouns, such as “she”, was repeated multiple times in prior sentences, you may exclude that from the cell state [^4].
+    To remedy this, LSTMs have “cells” in the hidden layers of the neural network, which have three gates–an input gate, an output gate, and a forget gate. These gates control the flow of information which is needed to predict the output in the network.  For example, if gender pronouns, such as “she”, was repeated multiple times in prior sentences, you may exclude that from the cell state[^4].
 
 ```
 _________________________________________________________________
@@ -408,7 +419,7 @@ Testing Accuracy:  0.7065
 
 - Model 4: GRU Layer Stacking
 
-     **Gated recurrent units (GRUs)**: This RNN variant is similar the LSTMs as it also works to address the short-term memory problem of RNN models. Instead of using a “cell state” regulate information, it uses hidden states, and instead of three gates, it has two—a reset gate and an update gate. Similar to the gates within LSTMs, the reset and update gates control how much and which information to retain [^4].
+     **Gated recurrent units (GRUs)**: This RNN variant is similar the LSTMs as it also works to address the short-term memory problem of RNN models. Instead of using a “cell state” regulate information, it uses hidden states, and instead of three gates, it has two—a reset gate and an update gate. Similar to the gates within LSTMs, the reset and update gates control how much and which information to retain[^4].
 
 ```
 _________________________________________________________________
@@ -466,10 +477,14 @@ Sentiment and Text Content Analysis
 
 **Let’s explore how the positive and negative tweets affect the price changes**
 
+Based on the scatter matrix below, it's hard to define any significant correlations between the price changes and sentiment labels. The results may change if more data is provided.
+
 ![tweet_data](img/scatter_plot_final_df_selected.png)
 
 
 **Correlations**
+
+Based on the correlation heatmap below, the conclusion is that the negative emotions have the biggest impact on the price change and the trading volume. 
 
 ![tweet_data](img/df_final_corr.png)
 
@@ -480,7 +495,7 @@ This measures the strength and direction of the linear relationship between two 
 
 A value of exactly 1.0 means there is a perfect positive relationship between the two variables. For a positive increase in one variable, there is also a positive increase in the second variable. A value of -1.0 means there is a perfect negative relationship between the two variables. This shows that the variables move in opposite directions—for a positive increase in one variable, there is a decrease in the second variable. If the correlation between two variables is 0, there is no linear relationship between them.
 
-The strength of the relationship varies in degree based on the value of the correlation coefficient. For example, a value of 0.2 shows there is a positive correlation between two variables, but it is weak and likely unimportant. Analysts in some fields of study do not consider correlations important until the value surpasses at least 0.8. However, a correlation coefficient with an absolute value of 0.9 or greater would represent a very strong relationship [^5].
+The strength of the relationship varies in degree based on the value of the correlation coefficient. For example, a value of 0.2 shows there is a positive correlation between two variables, but it is weak and likely unimportant. Analysts in some fields of study do not consider correlations important until the value surpasses at least 0.8. However, a correlation coefficient with an absolute value of 0.9 or greater would represent a very strong relationship[^5].
 
 <br />
 
