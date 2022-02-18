@@ -480,7 +480,7 @@ This measures the strength and direction of the linear relationship between two 
 
 A value of exactly 1.0 means there is a perfect positive relationship between the two variables. For a positive increase in one variable, there is also a positive increase in the second variable. A value of -1.0 means there is a perfect negative relationship between the two variables. This shows that the variables move in opposite directions—for a positive increase in one variable, there is a decrease in the second variable. If the correlation between two variables is 0, there is no linear relationship between them.
 
-The strength of the relationship varies in degree based on the value of the correlation coefficient. For example, a value of 0.2 shows there is a positive correlation between two variables, but it is weak and likely unimportant. Analysts in some fields of study do not consider correlations important until the value surpasses at least 0.8. However, a correlation coefficient with an absolute value of 0.9 or greater would represent a very strong relationship.
+The strength of the relationship varies in degree based on the value of the correlation coefficient. For example, a value of 0.2 shows there is a positive correlation between two variables, but it is weak and likely unimportant. Analysts in some fields of study do not consider correlations important until the value surpasses at least 0.8. However, a correlation coefficient with an absolute value of 0.9 or greater would represent a very strong relationship [^5].
 
 <br />
 
@@ -561,16 +561,13 @@ References:
 
 [^1]: https://www.linkedin.com/pulse/how-much-can-you-make-trading-bot-my-experience-month-gothireddy
 
-
 [^2]: https://www.geeksforgeeks.org/python-sentiment-analysis-using-vader/
-
 
 [^3]: https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
 
-
 [^4]: https://www.ibm.com/cloud/learn/recurrent-neural-networks
 
-
+[^5]: https://www.investopedia.com/terms/c/correlationcoefficient.asp
 
 
 

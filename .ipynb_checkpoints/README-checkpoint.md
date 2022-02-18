@@ -1,3 +1,5 @@
+![tweet_data](img/cover.jpg)
+
 # Bitcoin sentiment and price analysis. Search for patterns affecting price changes. 
 
 ---
@@ -39,7 +41,7 @@ Of course there are many more cases where sentiment analysis can be used to prov
 
 
 Trading bots mostly depend on the technical analysis and typical trading indicators and patterns. While this can be good for the stock market, it might fail with the cryptocurrencies due to the high volatility.
-To improve the accuracy and returns of the cryptocurrency trading algorithms, we could add a sentiment analysis component to track investors’ emotions towards cryptocurrencies. This feature could be another indicator to improve crypto trading. 
+To improve the accuracy and returns of the cryptocurrency trading algorithms, we could add a sentiment analysis component to track investors’ emotions towards cryptocurrencies. This feature could be another indicator to improve crypto trading [^1]. 
 
 <br />
 
@@ -127,15 +129,26 @@ The twitter data also doesn;t include other major languages and geo data which m
 
 ![tweet_data](img/tweet_data.png)
 
+![tweet_data](img/tweet_public_metrics.png)
 
+![tweet_data](img/tweet_source.png)
+
+
+**Author data**
 
 ![tweet_data](img/author_data.png)
 
+![tweet_data](img/author_most_pop.png)
 
+
+**Tweet Counts**
 
 ![tweet_data](img/tweet_counts.png)
 
 ![tweet_data](img/plot_tweet_counts.png)
+
+
+**Bitcoin Price**
 
 ![tweet_data](img/btc_price_df.png)
 
@@ -145,13 +158,17 @@ The twitter data also doesn;t include other major languages and geo data which m
 <br />
 
 
-## 5. Neural network Classification Model
+## 5. Neural network Classification Model and NLP
+
+**Process Steps Diagram**
+
+![tweet_data](img/process_diagram.jpg)
 
 **Raw Data Labeling Process**
 
 For the best results twitter text content should be labeled manually, however in this case, due to time constraints, Twitter data was labeled using VADER (Valence Aware Dictionary and sEntiment Reasoner). 
 
-Vader is a lexicon and rule-based sentiment analysis tool that is specifically attuned to sentiments expressed in social media. VADER uses a combination of A sentiment lexicon is a list of lexical features (e.g., words) which are generally labeled according to their semantic orientation as either positive or negative. VADER not only tells about the Positivity and Negativity score but also tells us about how positive or negative a sentiment is.
+Vader is a lexicon and rule-based sentiment analysis tool that is specifically attuned to sentiments expressed in social media. VADER uses a combination of A sentiment lexicon is a list of lexical features (e.g., words) which are generally labeled according to their semantic orientation as either positive or negative. VADER not only tells about the Positivity and Negativity score but also tells us about how positive or negative a sentiment is [^2].
 
 ![tweet_data](img/tweet_vader.png)
 
@@ -162,7 +179,9 @@ The Compound score is a metric that calculates the sum of all the lexicon rating
 
 ![tweet_data](img/tweet_labels.png)
 
-**Cleaning and Preprocessing Data**
+![tweet_data](img/labels_count.png)
+
+**Cleaning and Preprocessing Data with Natural Language Toolkit (NLTK)**
 
 Keras provides a Tokenizer class that can be fit on the training data, can convert text to sequences consistently by calling the texts_to_sequences() method on the Tokenizer class, and provides access to the dictionary mapping of words to integers in a word_index attribute.
 
@@ -248,9 +267,12 @@ developed by Stanford for generating word embeddings by aggregating global word-
 
 The GloVe model is trained on the non-zero entries of a global word-word co-occurrence matrix, which tabulates how frequently words co-occur with one another in a given corpus. Populating this matrix requires a single pass through the entire corpus to collect the statistics. For large corpora, this pass can be computationally expensive, but it is a one-time up-front cost.
 
-In addition to these carefully designed methods, a word embedding can be learned as part of a deep learning model. This can be a slower approach, but tailors the model to a specific training dataset.
+In addition to these carefully designed methods, a word embedding can be learned as part of a deep learning model. This can be a slower approach, but tailors the model to a specific training dataset [^3].
 
-**Create embedding matrix and Keras embedding layer**
+<br />
+
+
+**Create embedding matrix and KERAS embedding layer**
 
 The Keras Embedding layer can also use a word embedding learned elsewhere. It is common in the field of Natural Language Processing to learn, save, and make freely available word embeddings.
 
@@ -263,6 +285,25 @@ The Keras Embedding layer can also use a word embedding learned elsewhere. It is
 5. We chose the 50-dimensional version, therefore the Embedding layer must be defined with output_dim set to 50.
 6. We do not want to update the learned word weights in this model, therefore we will set the trainable attribute for the model to be False
 
+<br />
+
+**Embdedding layer**
+
+The Embedding layer is initialized with random weights and will learn an embedding for all of the words in the training dataset.
+
+It is a flexible layer that can be used in a variety of ways, such as:
+
+- It can be used alone to learn a word embedding that can be saved and used in another model later.
+- It can be used as part of a deep learning model where the embedding is learned along with the model itself.
+- It can be used to load a pre-trained word embedding model, a type of transfer learning which is the case here.
+
+The Embedding layer is defined as the first hidden layer of a network. It must specify 3 arguments:
+
+- input_dim: This is the size of the vocabulary in the text data. For example, if your data is integer encoded to values between 0-10, then the size of the vocabulary would be 11 words.
+- output_dim: This is the size of the vector space in which words will be embedded. It defines the size of the output vectors from this layer for each word. For example, it could be 32 or 100 or even larger. Test different values for your problem.
+- input_length: This is the length of input sequences, as you would define for any input layer of a Keras model. For example, if all of your input documents are comprised of 1000 words, this would be 1000 [^3].
+
+<br />
 
 ```python
 # Input is vocab_size, output is 50
@@ -274,10 +315,18 @@ embedding_layer = Embedding(input_dim=vocab_size, output_dim=50, weights=[embedd
                            input_length = tweet_num, trainable=False)
 ```
 
+![tweet_data](img/nn.jpg)
+
 
 **Build and test different neural network models**
 
 - Model 1: Simple LSTM Model with regularization, increase dimensionality
+
+    **Long short-term memory (LSTM)**: This is a popular RNN architecture, which was introduced by Sepp Hochreiter and Juergen Schmidhuber as a solution to vanishing gradient problem and to address the problem of long-term dependencies. That is, if the previous state that is influencing the current prediction is not in the recent past, the RNN model may not be able to accurately predict the current state. 
+
+    As an example, let’s say we wanted to predict the italicized words in following, “Alice is allergic to nuts. She *can’t eat peanut butter*.” The context of a nut allergy can help us anticipate that the food that cannot be eaten contains nuts. However, if that context was a few sentences prior, then it would make it difficult, or even impossible, for the RNN to connect the information. 
+
+    To remedy this, LSTMs have “cells” in the hidden layers of the neural network, which have three gates–an input gate, an output gate, and a forget gate. These gates control the flow of information which is needed to predict the output in the network.  For example, if gender pronouns, such as “she”, was repeated multiple times in prior sentences, you may exclude that from the cell state [^4].
 
 ```
 _________________________________________________________________
@@ -299,6 +348,8 @@ _________________________________________________________________
 Training Accuracy: 0.9200
 Testing Accuracy:  0.7138
 ```
+
+![tweet_data](img/model_1.png)
 
 - Model 2: LSTM with regularization, reduce dimensionality
 
@@ -322,6 +373,10 @@ _________________________________________________________________
 Training Accuracy: 0.7977
 Testing Accuracy:  0.7055
 ```
+
+
+![tweet_data](img/model_2.png)
+
 
 - Model 3: LSTM Layer Stacking
 
@@ -348,8 +403,12 @@ Training Accuracy: 0.7875
 Testing Accuracy:  0.7065
 ```
 
+![tweet_data](img/model_3.png)
+
 
 - Model 4: GRU Layer Stacking
+
+     **Gated recurrent units (GRUs)**: This RNN variant is similar the LSTMs as it also works to address the short-term memory problem of RNN models. Instead of using a “cell state” regulate information, it uses hidden states, and instead of three gates, it has two—a reset gate and an update gate. Similar to the gates within LSTMs, the reset and update gates control how much and which information to retain [^4].
 
 ```
 _________________________________________________________________
@@ -373,6 +432,12 @@ _________________________________________________________________
 Training Accuracy: 0.7891
 Testing Accuracy:  0.7096
 ```
+
+![tweet_data](img/model_4.png)
+
+
+<br />
+
 
 **General Architecture**
 The inputs for each of the following models are our training data which consists of 7,273 with 20% withheld for validation. Each one of these observations contains 50 “features” which correspond to each word in the tweet. Any 0’s indicate the absence of a word.
@@ -415,7 +480,7 @@ This measures the strength and direction of the linear relationship between two 
 
 A value of exactly 1.0 means there is a perfect positive relationship between the two variables. For a positive increase in one variable, there is also a positive increase in the second variable. A value of -1.0 means there is a perfect negative relationship between the two variables. This shows that the variables move in opposite directions—for a positive increase in one variable, there is a decrease in the second variable. If the correlation between two variables is 0, there is no linear relationship between them.
 
-The strength of the relationship varies in degree based on the value of the correlation coefficient. For example, a value of 0.2 shows there is a positive correlation between two variables, but it is weak and likely unimportant. Analysts in some fields of study do not consider correlations important until the value surpasses at least 0.8. However, a correlation coefficient with an absolute value of 0.9 or greater would represent a very strong relationship.
+The strength of the relationship varies in degree based on the value of the correlation coefficient. For example, a value of 0.2 shows there is a positive correlation between two variables, but it is weak and likely unimportant. Analysts in some fields of study do not consider correlations important until the value surpasses at least 0.8. However, a correlation coefficient with an absolute value of 0.9 or greater would represent a very strong relationship [^5].
 
 <br />
 
@@ -432,24 +497,77 @@ The strength of the relationship varies in degree based on the value of the corr
 
 ![tweet_data](img/bigram_freq.png)
 
-**Highest Correlations single words**
+<br />
+
+
+**Highest correlations single words**
+
+The single words with the highest correlation coefficients are included in the dataframe below. We can see that is word 'trying' with correlation of  0.32. This is not a high value for correlation so we can't say that any of those words is highly coorelated with the price change. That being said, if more data is provided, the correlation might change. 
 
 ![tweet_data](img/word_corr.png)
 
-**Highest Correlations for bigrams**
+<br />
+
+
+**Highest correlations for bigrams**
 
 ![tweet_data](img/bigram_corr.png)
 
+<br />
+
+**Bitcoin price vs Twitter sentiment - plots comparison**
+
+![tweet_data](img/sentiment_price_corr.png)
+
+<br />
+
+## 7. Summary and Next Steps
+
+**Summary**
+
+- Best neural newtwork model is Model 4: GRU Layer Stacking with 71% accuracy;
+
+- The hightest correlation for price difference vs. single wrods has 'trying' with 0.32 correlation coefficient;
+
+- The hightest correlation for price difference vs. bigrams has 'are, getting' with 0.27 correlation coefficient;
+
+- Negative sentiment has impact on the trading volume and price volatility;
+
+- Negative sentiment has has bigger impact on the price change then positive and neutral ;
+
+- Tweets' volums does not show any significat impact on the price change (correlation = 0.2);
+
+- Main tools used for posting tweets are Twitter Web App and Twitter for iPhone.
+
+
+Next Steps
+
+- Gather more data
+
+- Perform analysis of the sentiment and see how it affetcs the price after certain time period. i.e 1 sec, 30 sec, 1min, etc. Analize the correlation coefficients for each period.
+
+- Check more languages for tweets. Certain languages like time zones might be corrleated with certain languages with might have an impact of price fluctuations. 
+
+- Try to predict the price move (increase or decrease) based on certain features like sentiment, author, time using NN or XGBoost
+
+- Visualize price difference vs. sentiment by minute
 
 
 
 
-https://www.linkedin.com/pulse/how-much-can-you-make-trading-bot-my-experience-month-gothireddy
+<br />
 
-https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing
+References:
 
-https://www.geeksforgeeks.org/python-sentiment-analysis-using-vader/
+[^1]: https://www.linkedin.com/pulse/how-much-can-you-make-trading-bot-my-experience-month-gothireddy
 
-https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
+[^2]: https://www.geeksforgeeks.org/python-sentiment-analysis-using-vader/
 
-https://www.investopedia.com/terms/c/correlationcoefficient.asp
+[^3]: https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
+
+[^4]: https://www.ibm.com/cloud/learn/recurrent-neural-networks
+
+[^5]: https://www.investopedia.com/terms/c/correlationcoefficient.asp
+
+
+
