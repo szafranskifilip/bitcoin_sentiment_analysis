@@ -585,4 +585,20 @@ References:
 [^5]: https://www.investopedia.com/terms/c/correlationcoefficient.asp
 
 
+<br />
 
+Folder Structure
+
+```
+.
+├── api_csv                     # all processed csv files containg tweet and btc data
+├── data                        # raw API data
+├── img                         # plots and other images
+├── rnn_best_models             # best performing GRU and LSTM models
+├── config.py                   # API credentials
+├── API_csv_processing.ipynb    # API requestes
+├── data_preprocessing.ipynb    # Raw Data processing
+├── DL model.ipynb              # RNN models
+├── EDA.ipynb                   # Exploratory Data Analysis
+└── README.md
+```
