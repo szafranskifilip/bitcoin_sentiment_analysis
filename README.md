@@ -572,23 +572,6 @@ Next Steps
 
 <br />
 
-References:
-
-[^1]: https://www.linkedin.com/pulse/how-much-can-you-make-trading-bot-my-experience-month-gothireddy
-
-[^2]: https://www.geeksforgeeks.org/python-sentiment-analysis-using-vader/
-
-[^3]: https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
-
-[^4]: https://www.ibm.com/cloud/learn/recurrent-neural-networks
-
-[^5]: https://www.investopedia.com/terms/c/correlationcoefficient.asp
-
-
-
-
-
-<br />
 
 Folder Structure
 
@@ -605,3 +588,21 @@ Folder Structure
 ├── EDA.ipynb                   # Exploratory Data Analysis
 └── README.md
 ```
+
+
+
+<br />
+
+References:
+
+
+[^1]: https://www.linkedin.com/pulse/how-much-can-you-make-trading-bot-my-experience-month-gothireddy
+
+[^2]: https://www.geeksforgeeks.org/python-sentiment-analysis-using-vader/
+
+[^3]: https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
+
+[^4]: https://www.ibm.com/cloud/learn/recurrent-neural-networks
+
+[^5]: https://www.investopedia.com/terms/c/correlationcoefficient.asp
+
