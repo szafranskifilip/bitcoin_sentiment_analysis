@@ -586,6 +586,7 @@ Folder Structure
 ├── data_preprocessing.ipynb    # Raw Data processing
 ├── DL model.ipynb              # RNN models
 ├── EDA.ipynb                   # Exploratory Data Analysis
+├── new_data_sentiment.ipynb    # Sentiment determination with pre-trained RNN model
 └── README.md
 ```
 
