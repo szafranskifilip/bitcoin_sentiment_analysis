@@ -295,7 +295,9 @@ The Keras Embedding layer can also use a word embedding learned elsewhere. It is
 
 **Embdedding layer**
 
-The Embedding layer is initialized with random weights and will learn an embedding for all of the words in the training dataset.
+![tweet_data](img/embedding_layer.jpg)
+
+In Keras, the embedding matrix is represented as a "layer" and maps positive integers (indices corresponding to words) into dense vectors of fixed size (the embedding vectors). It can be trained or initialized with a pre-trained embedding.
 
 It is a flexible layer that can be used in a variety of ways, such as:
 
@@ -321,9 +323,35 @@ embedding_layer = Embedding(input_dim=vocab_size, output_dim=50, weights=[embedd
                            input_length = tweet_num, trainable=False)
 ```
 
+Print test results from the embedding layer
+
+```python
+test = pad_sequences(t.texts_to_sequences(['Bitcoin is the best cryptocurrency']), maxlen=45)
+
+from keras import backend as K
+get_3rd_layer_output = K.function([lstm_mod1.layers[0].input],
+                                  [lstm_mod1.layers[0].output])
+layer_output = get_3rd_layer_output([test])[0]
+
+layer_output
+```
+```
+array([[[ 0.      ,  0.      ,  0.      , ...,  0.      ,  0.      ,
+          0.      ],
+        [ 0.      ,  0.      ,  0.      , ...,  0.      ,  0.      ,
+          0.      ],
+        [ 0.      ,  0.      ,  0.      , ...,  0.      ,  0.      ,
+          0.      ],
+        ...,
+        [ 0.2532  , -0.014884,  0.59371 , ..., -0.28932 ,  0.45493 ,
+          0.18659 ],
+        [ 0.44931 ,  0.16119 ,  0.20202 , ..., -0.47803 , -0.050996,
+         -0.36507 ],
+        [-0.67328 ,  0.029367, -1.0768  , ..., -0.17394 , -0.75342 ,
+          1.1712  ]]], dtype=float32)
+          
+```
 <br />
-
-
 
 **Visual representation of Model 4**
 
