@@ -555,7 +555,7 @@ The single words with the highest correlation coefficients are included in the d
 - Main tools used for posting tweets are Twitter Web App and Twitter for iPhone.
 
 
-Next Steps
+**Next Steps**
 
 - Gather more data
 
