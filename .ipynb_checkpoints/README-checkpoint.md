@@ -35,7 +35,11 @@ Of course there are many more cases where sentiment analysis can be used to prov
 
 <br />
 
+
+
 ### 2. Sentiment analysis as an additional component for trading algorithms
+
+![tweet_data](img/trading_bot.jpg)
 
 #### *`“With this study, we understood that Bots only depend upon indicators, whereas the volatility induced by Elon Musk tweets or the sentiment due to Chinese government ban on crypto was not embedded. And it requires a human to intervene now and then. “`*
 
@@ -46,6 +50,8 @@ To improve the accuracy and returns of the cryptocurrency trading algorithms, we
 <br />
 
 ### 3. Data Sourcing
+
+![tweet_data](img/twitter.jpg)
 
 **Twitter Data**
 
@@ -555,7 +561,7 @@ The single words with the highest correlation coefficients are included in the d
 - Main tools used for posting tweets are Twitter Web App and Twitter for iPhone.
 
 
-Next Steps
+**Next Steps**
 
 - Gather more data
 
