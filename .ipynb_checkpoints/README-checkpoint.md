@@ -297,6 +297,7 @@ The Keras Embedding layer can also use a word embedding learned elsewhere. It is
 
 ![tweet_data](img/embedding_layer.jpg)
 
+
 In Keras, the embedding matrix is represented as a "layer" and maps positive integers (indices corresponding to words) into dense vectors of fixed size (the embedding vectors). It can be trained or initialized with a pre-trained embedding.
 
 It is a flexible layer that can be used in a variety of ways, such as:
